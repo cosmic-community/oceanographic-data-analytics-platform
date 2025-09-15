@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-white text-secondary-900;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-secondary-900;
+  }
+  
+  h1 {
+    @apply text-3xl;
+  }
+  
+  h2 {
+    @apply text-2xl;
+  }
+  
+  h3 {
+    @apply text-xl;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-secondary-200 rounded-lg shadow-sm;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-500 text-white hover:bg-primary-600 h-10 px-4 py-2;
+  }
+  
+  .btn-secondary {
+    @apply border border-secondary-200 bg-white hover:bg-secondary-50 h-10 px-4 py-2;
+  }
+  
+  .btn-sm {
+    @apply h-8 px-3 text-xs;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .status-pending {
+    @apply bg-warning/10 text-warning border border-warning/20;
+  }
+  
+  .status-processing {
+    @apply bg-primary-50 text-primary-600 border border-primary-200;
+  }
+  
+  .status-completed {
+    @apply bg-success/10 text-success border border-success/20;
+  }
+  
+  .status-error {
+    @apply bg-error/10 text-error border border-error/20;
+  }
+  
+  .priority-low {
+    @apply bg-secondary-100 text-secondary-600;
+  }
+  
+  .priority-medium {
+    @apply bg-warning/10 text-warning;
+  }
+  
+  .priority-high {
+    @apply bg-error/10 text-error;
+  }
+  
+  .priority-urgent {
+    @apply bg-error text-white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

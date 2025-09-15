@@ -85,7 +85,11 @@ export default async function VisualizationsPage() {
                     {viz.metadata.related_dataset && (
                       <div className="flex items-center gap-1">
                         <Database className="w-4 h-4" />
-                        <span>Dataset: {viz.metadata.related_dataset}</span>
+                        <span>
+                          Dataset: {typeof viz.metadata.related_dataset === 'string' 
+                            ? viz.metadata.related_dataset 
+                            : viz.metadata.related_dataset.metadata?.dataset_id || viz.metadata.related_dataset.title}
+                        </span>
                       </div>
                     )}
                   </div>

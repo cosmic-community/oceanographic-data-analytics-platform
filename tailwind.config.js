@@ -1,22 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0066cc',
-          50: '#e6f3ff',
-          100: '#cce7ff',
-          500: '#0066cc',
-          600: '#0052a3',
-          700: '#003d7a',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
         secondary: {
-          DEFAULT: '#64748b',
           50: '#f8fafc',
           100: '#f1f5f9',
           200: '#e2e8f0',
@@ -28,12 +32,12 @@ module.exports = {
           800: '#1e293b',
           900: '#0f172a',
         },
-        success: '#10b981',
-        warning: '#f59e0b',
-        error: '#ef4444',
+        border: '#e2e8f0',
+        background: '#ffffff',
+        foreground: '#0f172a',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
       },
     },
   },

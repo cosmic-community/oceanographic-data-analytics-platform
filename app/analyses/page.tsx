@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import { getDataAnalyses } from '@/lib/cosmic'
-import { Activity, Calendar, CheckCircle, Clock } from 'lucide-react'
+import { FileText, Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import type { Dataset } from '@/types'
 
 export default async function AnalysesPage() {
   const analyses = await getDataAnalyses()
 
-  const getStatusColor = (status: string | undefined) => {
-    switch (status) {
-      case 'excellent': return 'text-success bg-success/10'
-      case 'good': return 'text-blue-600 bg-blue-100'  
-      case 'fair': return 'text-warning bg-warning/10'
-      case 'poor': return 'text-error bg-error/10'
-      default: return 'text-secondary-600 bg-secondary-100'
+  const getStatusIcon = (status: string) => {
+    const icons = {
+      pending: <Clock className="w-4 h-4 text-yellow-500" />,
+      processing: <Clock className="w-4 h-4 text-blue-500" />,
+      completed: <CheckCircle className="w-4 h-4 text-green-500" />,
+      error: <AlertCircle className="w-4 h-4 text-red-500" />
     }
+    return icons[status as keyof typeof icons] || icons.pending
   }
 
   const getDatasetDisplayValue = (dataset: string | Dataset): string => {
@@ -29,7 +29,7 @@ export default async function AnalysesPage() {
         <div>
           <h1 className="text-3xl font-bold text-secondary-900">Data Analyses</h1>
           <p className="text-secondary-600 mt-2">
-            Review analysis results and data quality assessments
+            View and manage your oceanographic data analysis results
           </p>
         </div>
         <div className="text-sm text-secondary-500">
@@ -39,7 +39,7 @@ export default async function AnalysesPage() {
 
       {analyses.length === 0 ? (
         <div className="text-center py-12">
-          <Activity className="w-16 h-16 text-secondary-300 mx-auto mb-4" />
+          <FileText className="w-16 h-16 text-secondary-300 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-secondary-900 mb-2">No analyses found</h3>
           <p className="text-secondary-600">
             Your data analyses will appear here once they're added to your Cosmic bucket.
@@ -55,24 +55,34 @@ export default async function AnalysesPage() {
                     <h3 className="text-lg font-semibold text-secondary-900 line-clamp-2">
                       {analysis.title}
                     </h3>
-                    {analysis.metadata.data_quality && (
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(analysis.metadata.data_quality.key)}`}>
-                        {analysis.metadata.data_quality.value}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                      {analysis.metadata.data_quality && (
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          analysis.metadata.data_quality.key === 'excellent' 
+                            ? 'bg-green-100 text-green-700'
+                            : analysis.metadata.data_quality.key === 'good'
+                            ? 'bg-blue-100 text-blue-700'
+                            : analysis.metadata.data_quality.key === 'fair'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}>
+                          {analysis.metadata.data_quality.value}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="space-y-3 text-sm text-secondary-600">
                     {analysis.metadata.analysis_type && (
                       <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4" />
+                        <FileText className="w-4 h-4" />
                         <span>{analysis.metadata.analysis_type.value}</span>
                       </div>
                     )}
                     
                     {analysis.metadata.dataset && (
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4" />
+                        <span className="w-4 h-4 text-center">📊</span>
                         <span>Dataset: {getDatasetDisplayValue(analysis.metadata.dataset)}</span>
                       </div>
                     )}
@@ -80,7 +90,7 @@ export default async function AnalysesPage() {
                     {analysis.metadata.processing_date && (
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        <span>Processed: {new Date(analysis.metadata.processing_date).toLocaleDateString()}</span>
+                        <span>{new Date(analysis.metadata.processing_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
@@ -90,6 +100,13 @@ export default async function AnalysesPage() {
                       <p className="text-sm text-secondary-700 line-clamp-3">
                         {analysis.metadata.key_findings}
                       </p>
+                    </div>
+                  )}
+
+                  {analysis.metadata.excel_output_file && (
+                    <div className="mt-3 flex items-center gap-2 text-sm text-primary-600">
+                      <FileText className="w-4 h-4" />
+                      <span>Excel output available</span>
                     </div>
                   )}
                 </div>

@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import { getDataAnalyses } from '@/lib/cosmic'
-import { Activity, Calendar, Database, FileBarChart } from 'lucide-react'
+import { Activity, Calendar, CheckCircle, Clock } from 'lucide-react'
+import type { Dataset } from '@/types'
 
 export default async function AnalysesPage() {
   const analyses = await getDataAnalyses()
 
-  const getAnalysisTypeIcon = (analysisType: string) => {
-    const icons = {
-      meta: '📋',
-      prof: '📊',
-      rtraj: '🛰️',
-      combined: '🔄'
+  const getStatusColor = (status: string | undefined) => {
+    switch (status) {
+      case 'excellent': return 'text-success bg-success/10'
+      case 'good': return 'text-blue-600 bg-blue-100'  
+      case 'fair': return 'text-warning bg-warning/10'
+      case 'poor': return 'text-error bg-error/10'
+      default: return 'text-secondary-600 bg-secondary-100'
     }
-    
-    return icons[analysisType as keyof typeof icons] || '📊'
   }
 
   const getDatasetDisplayValue = (dataset: string | Dataset): string => {
@@ -29,7 +29,7 @@ export default async function AnalysesPage() {
         <div>
           <h1 className="text-3xl font-bold text-secondary-900">Data Analyses</h1>
           <p className="text-secondary-600 mt-2">
-            Review analysis results and key findings from your datasets
+            Review analysis results and data quality assessments
           </p>
         </div>
         <div className="text-sm text-secondary-500">
@@ -51,67 +51,47 @@ export default async function AnalysesPage() {
             <Link key={analysis.id} href={`/analyses/${analysis.slug}`}>
               <div className="card hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-4">
                     <h3 className="text-lg font-semibold text-secondary-900 line-clamp-2">
                       {analysis.title}
                     </h3>
-                    {analysis.metadata.analysis_type && (
-                      <span className="text-xl ml-2 flex-shrink-0">
-                        {getAnalysisTypeIcon(analysis.metadata.analysis_type.key)}
+                    {analysis.metadata.data_quality && (
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(analysis.metadata.data_quality.key)}`}>
+                        {analysis.metadata.data_quality.value}
                       </span>
                     )}
                   </div>
                   
-                  <div className="flex flex-wrap gap-3 text-sm text-secondary-600 mb-3">
+                  <div className="space-y-3 text-sm text-secondary-600">
                     {analysis.metadata.analysis_type && (
-                      <div className="flex items-center gap-1">
-                        <FileBarChart className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4" />
                         <span>{analysis.metadata.analysis_type.value}</span>
                       </div>
                     )}
                     
-                    {analysis.metadata.processing_date && (
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{analysis.metadata.processing_date}</span>
+                    {analysis.metadata.dataset && (
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Dataset: {getDatasetDisplayValue(analysis.metadata.dataset)}</span>
                       </div>
                     )}
                     
-                    {analysis.metadata.dataset && (
-                      <div className="flex items-center gap-1">
-                        <Database className="w-4 h-4" />
-                        <span>
-                          Dataset: {getDatasetDisplayValue(analysis.metadata.dataset)}
-                        </span>
+                    {analysis.metadata.processing_date && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>Processed: {new Date(analysis.metadata.processing_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
 
                   {analysis.metadata.key_findings && (
-                    <p className="text-sm text-secondary-700 line-clamp-3 mb-4">
-                      {analysis.metadata.key_findings}
-                    </p>
+                    <div className="mt-4 p-3 bg-secondary-50 rounded-lg">
+                      <p className="text-sm text-secondary-700 line-clamp-3">
+                        {analysis.metadata.key_findings}
+                      </p>
+                    </div>
                   )}
-
-                  <div className="flex items-center justify-between">
-                    {analysis.metadata.data_quality && (
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        analysis.metadata.data_quality.key === 'excellent' 
-                          ? 'bg-success-100 text-success-800' 
-                          : analysis.metadata.data_quality.key === 'good'
-                          ? 'bg-primary-100 text-primary-800'
-                          : analysis.metadata.data_quality.key === 'fair'
-                          ? 'bg-warning-100 text-warning-800'
-                          : 'bg-error-100 text-error-800'
-                      }`}>
-                        {analysis.metadata.data_quality.value} Quality
-                      </span>
-                    )}
-                    
-                    <span className="text-xs text-secondary-500">
-                      {new Date(analysis.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
                 </div>
               </div>
             </Link>

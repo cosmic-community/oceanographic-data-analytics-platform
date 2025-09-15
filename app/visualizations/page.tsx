@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getVisualizations } from '@/lib/cosmic'
 import { BarChart3, Database, Palette } from 'lucide-react'
+import type { Dataset } from '@/types'
 
 export default async function VisualizationsPage() {
   const visualizations = await getVisualizations()
@@ -16,6 +17,13 @@ export default async function VisualizationsPage() {
     }
     
     return icons[chartType as keyof typeof icons] || '📊'
+  }
+
+  const getDatasetDisplayValue = (dataset: string | Dataset): string => {
+    if (typeof dataset === 'string') {
+      return dataset
+    }
+    return dataset.metadata?.dataset_id || dataset.title || 'Unknown Dataset'
   }
 
   return (
@@ -86,9 +94,7 @@ export default async function VisualizationsPage() {
                       <div className="flex items-center gap-1">
                         <Database className="w-4 h-4" />
                         <span>
-                          Dataset: {typeof viz.metadata.related_dataset === 'string' 
-                            ? viz.metadata.related_dataset 
-                            : viz.metadata.related_dataset.metadata?.dataset_id || viz.metadata.related_dataset.title}
+                          Dataset: {getDatasetDisplayValue(viz.metadata.related_dataset)}
                         </span>
                       </div>
                     )}
